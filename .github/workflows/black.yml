@@ -1,4 +1,4 @@
-  name: Black
+name: Black
 
 on:
   push:
@@ -8,12 +8,17 @@ on:
     branches:
       - master
 
-  jobs:
-    lint:
-      runs-on: ubuntu-latest
-      steps:
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v2
-      - name: Black Code Formatter
-        uses: lgeiger/black-action@v1.0.1
-        with:
-          args: ". --check" 
+
+      - name: Setup black environment
+        run: conda create --quiet --name black black
+
+      - name: Check formatting
+        run: |
+          export PATH="/usr/share/miniconda/bin:$PATH"
+          source activate black
+          black --check .
