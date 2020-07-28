@@ -1,4 +1,4 @@
-name: Black
+  name: Black
 
 on:
   push:
@@ -8,21 +8,12 @@ on:
     branches:
       - master
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v2
-      - run: pip install black isort
-      - run: black --check .
-      - name: If needed, commit black changes to a new pull request
-        if: failure()
-        run: |
-          black .
-          isort --profile black .
-          git config --global user.name github-actions
-          git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'          
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-          git commit -am "fixup! Format Python code with psf/black push"
-          git push --force origin HEAD:$GITHUB_REF
+  jobs:
+    lint:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v2
+      - name: Black Code Formatter
+        uses: lgeiger/black-action@v1.0.1
+        with:
+          args: ". --check" 
